@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+reports/
+tither_data.json
+
 # C extensions
 *.so
 

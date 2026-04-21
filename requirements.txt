@@ -1,0 +1,2 @@
+# Church Tithing Accounting App - Python Dependencies
+reportlab>=4.0.0

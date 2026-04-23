@@ -184,7 +184,7 @@ class TitherApp:
         year_frame = tk.Frame(control_frame, bg=self.colors["bg"])
         year_frame.pack(side=tk.LEFT, padx=(0, 20))
         tk.Label(year_frame, text="Year:", bg=self.colors["bg"], fg=self.colors["fg"]).pack(side=tk.LEFT, padx=(0, 5))
-        self.year_var = tk.StringVar(value="")
+        self.year_var = tk.StringVar(value=str(datetime.now().year))
         self.year_combo = ttk.Combobox(year_frame, textvariable=self.year_var, width=6, state="readonly")
         self.year_combo.pack(side=tk.LEFT, padx=(0, 10))
         self.year_combo.bind("<<ComboboxSelected>>", self.on_year_change)
@@ -283,6 +283,7 @@ class TitherApp:
         self.root.bind("<r>", self.on_key_r)
         self.root.bind("<R>", self.on_key_r)
         self.root.bind("<at>", self.on_key_at)
+        self.root.bind("<slash>", self.on_key_slash)
         self.focus_tree()
 
         status_frame = tk.Frame(main_frame, bg=self.colors["bg"])
@@ -402,6 +403,7 @@ D - Delete selected item
 I - Edit selected item
 R - Tax Report
 @ - Toggle active only
+/ - Focus search
 Ctrl+Q - Quit"""
         popup = tk.Toplevel(self.root)
         popup.title("Keyboard Shortcuts")
@@ -477,6 +479,11 @@ Ctrl+Q - Quit"""
             return "break"
         self.active_only_var.set(not self.active_only_var.get())
         self.on_year_change()
+
+    def on_key_slash(self, event=None):
+        self.search_entry.focus_set()
+        self.search_entry.select_range(0, tk.END)
+        return "break"
 
     def show_settings(self):
         popup = tk.Toplevel(self.root)

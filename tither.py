@@ -9,6 +9,7 @@ from tkinter import ttk
 from tkinter import filedialog
 import json
 import os
+import sys
 from datetime import datetime
 try:
     from reportlab.lib.pagesizes import letter
@@ -19,7 +20,11 @@ except ImportError:
     HAS_REPORTLAB = False
 
 
-DATA_FILE = "tither_data.json"
+if getattr(sys, 'frozen', False):
+    APP_DIR = os.path.dirname(sys.executable)
+else:
+    APP_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(APP_DIR, "tither_data.json")
 
 
 class TitherApp:
@@ -37,14 +42,14 @@ class TitherApp:
 
     def dark_theme(self):
         self.colors = {
-            "bg": "#1e1e1e",
+            "bg": "#000000",
             "fg": "#ffffff",
-            "accent": "#4a90d9",
+            "accent": "#2f2f2f",
             "entry_bg": "#2d2d2d",
             "tree_bg": "#252525",
             "tree_fg": "#ffffff",
             "highlight": "#3c3c3c",
-            "button": "#4a90d9",
+            "button": "#2f2f2f",
             "button_fg": "#ffffff",
         }
 
@@ -69,9 +74,11 @@ class TitherApp:
             "Treeview", background=[("selected", self.colors["accent"])]
         )
 
+        self.style = style
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
-        style.layout("TCombobox.empty", style.layout("TCombobox"))
-        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
+        style.configure("Dark.TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.map("TCombobox", fieldbackground=[("readonly", self.colors["entry_bg"])], background=[("readonly", self.colors["entry_bg"])])
+        style.map("Dark.TCombobox", fieldbackground=[("readonly", self.colors["entry_bg"])], background=[("readonly", self.colors["entry_bg"])])
         style.layout("TCombobox.empty", style.layout("TCombobox"))
         style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
@@ -317,9 +324,9 @@ class TitherApp:
                 if search_term and search_term not in member_name.lower() and search_term not in church_name.lower():
                     continue
 
-                member_tithes = [t for t in tithes if t.get("member_id") == member_id and t.get("date", "").startswith(selected_year)]
+                member_tithes = [t for t in tithes if t.get("member_id") == member_id and t.get("date", "").startswith(selected_year)] if selected_year else [t for t in tithes if t.get("member_id") == member_id]
 
-                if active_only and not member_tithes:
+                if active_only and selected_year and not member_tithes:
                     continue
 
                 member_node = self.tree.insert(
@@ -661,6 +668,7 @@ Ctrl+Q - Quit"""
             state="readonly",
         )
         church_combo.pack(pady=5, padx=20, fill=tk.X)
+        church_combo.configure(style="TCombobox")
         if self.selected_church and self.selected_church in self.data["churches"]:
             church_combo.set(self.selected_church)
         elif self.data["churches"]:
@@ -714,12 +722,6 @@ Ctrl+Q - Quit"""
         popup.geometry("450x400")
         popup.configure(bg=self.colors["bg"])
 
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
-        style.layout("TCombobox.empty", style.layout("TCombobox"))
-        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
-
         popup.bind("<Escape>", lambda e: popup.destroy())
 
         tk.Label(
@@ -739,6 +741,7 @@ Ctrl+Q - Quit"""
             state="readonly",
         )
         church_combo.pack(pady=5, padx=20, fill=tk.X)
+        church_combo.configure(style="TCombobox")
 
         if self.selected_church and self.selected_church in self.data["churches"]:
             church_combo.set(self.selected_church)
@@ -746,6 +749,7 @@ Ctrl+Q - Quit"""
         members_var = tk.StringVar()
         members_combo = ttk.Combobox(popup, textvariable=members_var, state="readonly")
         members_combo.pack(pady=5, padx=20, fill=tk.X)
+        members_combo.configure(style="TCombobox")
 
         def update_members(*args):
             church = church_var.get()

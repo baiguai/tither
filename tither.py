@@ -69,6 +69,18 @@ class TitherApp:
             "Treeview", background=[("selected", self.colors["accent"])]
         )
 
+        style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
+
+    def update_year_combo_style(self, event=None):
+        if self.year_var.get():
+            self.year_combo.config(style="TCombobox")
+        else:
+            self.year_combo.config(style="TCombobox.empty")
+
     def load_data(self):
         if os.path.exists(DATA_FILE):
             with open(DATA_FILE, "r") as f:
@@ -165,10 +177,11 @@ class TitherApp:
         year_frame = tk.Frame(control_frame, bg=self.colors["bg"])
         year_frame.pack(side=tk.LEFT, padx=(0, 20))
         tk.Label(year_frame, text="Year:", bg=self.colors["bg"], fg=self.colors["fg"]).pack(side=tk.LEFT, padx=(0, 5))
-        self.year_var = tk.StringVar(value=str(datetime.now().year))
+        self.year_var = tk.StringVar(value="")
         self.year_combo = ttk.Combobox(year_frame, textvariable=self.year_var, width=6, state="readonly")
         self.year_combo.pack(side=tk.LEFT, padx=(0, 10))
         self.year_combo.bind("<<ComboboxSelected>>", self.on_year_change)
+        self.update_year_combo_style()
 
         self.active_only_var = tk.BooleanVar(value=True)
         self.active_only_cb = tk.Checkbutton(
@@ -349,6 +362,7 @@ class TitherApp:
                 self.year_var.set(self.year_combo.get())
 
     def on_year_change(self, event=None):
+        self.update_year_combo_style()
         self.populate_tree()
 
     def on_search(self, event=None):
@@ -468,6 +482,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         tk.Label(
             popup,
@@ -562,6 +578,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -621,6 +639,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -697,6 +717,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -902,6 +924,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -964,6 +988,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -1219,6 +1245,8 @@ Ctrl+Q - Quit"""
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("TCombobox", fieldbackground=self.colors["entry_bg"], background=self.colors["entry_bg"], foreground=self.colors["fg"], selectbackground=self.colors["entry_bg"])
+        style.layout("TCombobox.empty", style.layout("TCombobox"))
+        style.configure("TCombobox.empty", fieldbackground="#000000", background="#000000", foreground="#888888")
 
         popup.bind("<Escape>", lambda e: popup.destroy())
 
@@ -1241,6 +1269,36 @@ Ctrl+Q - Quit"""
         amount_entry.pack(pady=5, padx=20, fill=tk.X)
         amount_entry.insert(0, amount_str.replace("$", "").replace(",", ""))
 
+        tk.Label(popup, text="Date:", bg=self.colors["bg"], fg=self.colors["fg"]).pack()
+        date_frame = tk.Frame(popup, bg=self.colors["bg"])
+        date_frame.pack(pady=5, padx=20, fill=tk.X)
+
+        date_var = tk.StringVar(value=date_str)
+        date_entry = tk.Entry(date_frame, textvariable=date_var, bg=self.colors["entry_bg"], fg=self.colors["fg"], insertbackground=self.colors["fg"], width=12)
+        date_entry.pack(side=tk.LEFT)
+
+        def show_calendar():
+            cal_win = tk.Toplevel(popup)
+            cal_win.title("Select Date")
+            cal_win.configure(bg=self.colors["bg"])
+            current_date = date_var.get()
+            try:
+                year = int(current_date[:4])
+                month = int(current_date[5:7])
+                day = int(current_date[8:10])
+            except:
+                year = datetime.now().year
+                month = datetime.now().month
+                day = datetime.now().day
+            cal = tk.Calendar(cal_win, year=year, month=month, day=day, selectmode="day")
+            cal.pack(pady=10)
+            def on_select():
+                date_var.set(cal.selection_get().strftime("%Y-%m-%d"))
+                cal_win.destroy()
+            tk.Button(cal_win, text="Select", bg=self.colors["button"], fg=self.colors["button_fg"], command=on_select, relief=tk.FLAT).pack(pady=5)
+
+        tk.Button(date_frame, text="Pick", bg=self.colors["button"], fg=self.colors["button_fg"], command=show_calendar, relief=tk.FLAT, padx=5).pack(side=tk.LEFT, padx=5)
+
         tk.Label(popup, text="Notes:", bg=self.colors["bg"], fg=self.colors["fg"]).pack()
         notes_entry = tk.Entry(popup, bg=self.colors["entry_bg"], fg=self.colors["fg"], insertbackground=self.colors["fg"])
         notes_entry.pack(pady=5, padx=20, fill=tk.X)
@@ -1252,6 +1310,7 @@ Ctrl+Q - Quit"""
         def save_edit():
             amount_val = amount_entry.get().strip()
             notes_val = notes_entry.get().strip()
+            date_val = date_var.get().strip()
             try:
                 amount = float(amount_val)
             except ValueError:
@@ -1260,6 +1319,7 @@ Ctrl+Q - Quit"""
             for tithe in self.data["churches"][church_name]["tithes"]:
                 if tithe.get("id", "")[:8] == tithe_id:
                     tithe["amount"] = amount
+                    tithe["date"] = date_val
                     tithe["notes"] = notes_val
                     break
             self.save_data()
